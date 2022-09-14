@@ -61,4 +61,62 @@ class empresaView(View):
             mensaje={"Mensaje":"La empresa a eliminar no existe."}
         return JsonResponse(mensaje)
 
+class empleadoView(View):
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self,request,ID=0):
+        if ID>0:
+            user=list(empleado.objects.filter(empleado_id=ID).values())
+            if len(user)>0:
+                datos={"Mensaje":user}
+            else:
+                datos={"Mensaje":"Tal empresa no existe."}
+        else: 
+            usua=list(empresa.objects.values())
+            if len(usua)>0:
+                datos={"Mensaje":usua}
+            else:
+                datos={"Mensaje":"No hay empresas."}
+        return JsonResponse(datos)
+
+    def post(self,request):
+        datos1=json.loads(request.body)
+        try:
+            idemp=empresa.objects.get(empresa_id=datos1["ID Empresa"])
+            idreg=registro_contable.objects.get(contabilidad=datos1["Registro"])
+            iduser=usuario.objects.get(usuario_id=datos1["ID User"])
+            emplN=empleado.objects.create(empresa_id=idemp,registro_id=idreg,usuario_id=iduser)
+            emplN.sabe()
+            mensaje={"Mensaje":"El empleado ha sido guardado"}
+        except empresa.DoesNotExist:
+            mensaje={"Mensaje":"La empresa no existe"}
+        except registro_contable.DoesNotExist:
+            mensaje={"Mensaje":"No se ha realizado registros"}
+        except usuario.DoesNotExist:
+            mensaje={"Mensaje":"No existe el usuario"}
+        return JsonResponse(mensaje)
+
+    def put(self,request,ID):
+        datos3=json.loads(request.body)
+        useract=list(empresa.objects.filter(nit=ID).values())
+        if len(useract)>0:
+            users=empleado.objects.get(nit=ID)
+            users.empresa_id=datos3["ID Empresa"]
+            users.regitro_id=datos3["ID Registro"]
+            users.save()
+            mensaje={"Mensaje":"Datos del Empleado actualizado"}
+        else:
+            mensaje={"Mensaje":"No existe el empleado que buscas."}
+        return JsonResponse(mensaje)
+
+    def delete(self,request,ID):
+        userdelete=list(empresa.objects.filter(empleado_id=ID).values())
+        if len(userdelete)>0:
+            empleado.objects.get(empleado_id=ID).delete()
+            mensaje={"Mensaje":"Datos del empleado eliminados."}
+        else:
+            mensaje={"Mensaje":"El empleado a eliminar no existe."}
+        return JsonResponse(mensaje)
