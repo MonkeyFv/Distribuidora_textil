@@ -11,6 +11,9 @@ class empresa(models.Model):
     telefono=models.CharField(max_length=50, null=False)
     nit=models.CharField(unique=True, max_length=50)
 
+    def __str__(self) -> str:
+        return self.nombre
+
 class estado_financiero(models.Model):
     estado_financiero_id=models.AutoField(auto_created=True, primary_key=True) #verbosename o choices.
     estado=models.IntegerField(null=False)
@@ -24,6 +27,9 @@ class usuario(models.Model):
     telefono = models.CharField(max_length= 50, null=False)
     rol_id = models.ForeignKey(rol, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return self.nombre
+
 class registro_contable(models.Model):
     contabilidad=models.CharField(primary_key=True, max_length=50)
     fecha=models.DateField(auto_now=True)
@@ -34,7 +40,7 @@ class registro_contable(models.Model):
 class empleado(models.Model):
     empleado_id= models.AutoField(auto_created=True, primary_key=True)
     empresa_id= models.ForeignKey(empresa,on_delete=models.CASCADE)
-    registro_id= models.ForeignKey(registro_contable, on_delete=models.CASCADE)
+    registro_id= models.ForeignKey(registro_contable, on_delete=models.CASCADE) #Esto dará error toca eliminar
     usuario_id= models.ForeignKey(usuario, on_delete=models.CASCADE)
 
 class userempleado(models.Model): #Relación 1:1
