@@ -6,7 +6,6 @@ from app.models import *
 
 admin.site.register(rol)
 admin.site.register(empresa)
-admin.site.register(estado_financiero)
 admin.site.register(usuario)
 admin.site.register(registro_contable)
 admin.site.register(empleado)
